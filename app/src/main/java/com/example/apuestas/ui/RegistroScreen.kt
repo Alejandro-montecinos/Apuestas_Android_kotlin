@@ -63,7 +63,6 @@ fun RegistroScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color(0xFF811E1E))
             .padding(24.dp),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
@@ -185,7 +184,7 @@ fun RegistroScreen(
                 border = BorderStroke(1.dp, iconTintColor),
                 shape = RoundedCornerShape(4.dp)
             ) {
-                Text(if (uiState.pais.isEmpty()) "Selecciona país" else uiState.pais, color = Color.White)
+                Text(if (uiState.pais.isEmpty()) "Selecciona país" else uiState.pais)
             }
             DropdownMenu(expanded = expandedPais, onDismissRequest = { expandedPais = false }) {
                 paises.forEach { p ->
@@ -212,7 +211,7 @@ fun RegistroScreen(
                 border = BorderStroke(1.dp, iconTintColor),
                 shape = RoundedCornerShape(4.dp)
             ) {
-                Text(if (uiState.moneda.isEmpty()) "Selecciona moneda" else uiState.moneda, color = Color.White)
+                Text(if (uiState.moneda.isEmpty()) "Selecciona moneda" else uiState.moneda)
             }
             DropdownMenu(expanded = expandedMoneda, onDismissRequest = { expandedMoneda = false }) {
                 monedas[uiState.pais]?.let { monedaSeleccionada ->

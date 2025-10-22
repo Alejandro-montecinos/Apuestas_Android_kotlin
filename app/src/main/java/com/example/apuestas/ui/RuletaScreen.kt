@@ -46,15 +46,6 @@ fun RuletaScreen(){
 
     var ruletaview = RuletaViewModel()
 
-
-
-
-
-
-
-
-
-
     var numeroTexto by remember { mutableStateOf("") }
     var mensajePerder2 by remember { mutableStateOf("") }
     var mensajePerder by remember { mutableStateOf("") }
@@ -234,7 +225,7 @@ fun RuletaScreen(){
 
 
 
-            // 🔔 Alerta de Ganar
+            //Alerta de Ganar
         if (mostrarAlerta) {
             AlertDialog(
                 onDismissRequest = { mostrarAlerta = false },
