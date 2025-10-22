@@ -15,6 +15,9 @@ fun NavGraph(
     navController: NavHostController = rememberNavController(),
     registroViewModel: RegistroViewModel = viewModel(),
     loginViewModel: LoginViewModel = viewModel()
+
+
+
 ) {
     NavHost(navController = navController, startDestination = "registro") {
         composable("registro") {
@@ -38,7 +41,11 @@ fun NavGraph(
 
 
         composable("ruleta") {
-            RuletaScreen()
+            RuletaScreen(navController = navController)
         }
+
+
+
+
     }
 }

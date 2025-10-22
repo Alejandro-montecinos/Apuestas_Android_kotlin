@@ -35,6 +35,7 @@ import com.example.apuestas.viewmodel.RuletaViewModel
 import androidx.compose.foundation.Image
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.layout.ContentScale
+import androidx.navigation.NavHostController
 import com.example.apuestas.R
 
 
@@ -42,7 +43,7 @@ import com.example.apuestas.R
 
 
 @Composable
-fun RuletaScreen(){
+fun RuletaScreen(navController: NavHostController){
 
     var ruletaview = RuletaViewModel()
 
@@ -55,6 +56,7 @@ fun RuletaScreen(){
     var dineroPerdido by remember { mutableStateOf(0) }
     var dineroPerdido2 by remember { mutableStateOf(0) }
     var colorSeleccionado by remember { mutableStateOf<Boolean?>(null) }
+    var btmVolver by remember { mutableStateOf(false) }
 
 
     // Convierte a Int si es posible, o 0
@@ -242,10 +244,17 @@ fun RuletaScreen(){
 
 
 
+        Button(onClick = {
+            navController.popBackStack("inicio", inclusive = false)
+            mensajePerder2 = ""
+            contadorPerdidas2 = 0
+            dineroPerdido2=0
+            mensajePerder = ""
 
 
-
-
+        }) {
+            Text("Volver")
+        }
 
 
 
