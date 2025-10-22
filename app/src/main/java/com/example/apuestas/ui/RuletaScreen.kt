@@ -33,6 +33,8 @@ import androidx.compose.runtime.mutableStateOf
 import com.example.apuestas.viewmodel.RuletaViewModel
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.layout.ContentScale
 import com.example.apuestas.R
@@ -61,9 +63,13 @@ fun RuletaScreen(){
     val numeroIngresado: Int = numeroTexto.toIntOrNull() ?: 0
 
     Column(
+
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
         modifier = Modifier.fillMaxSize().padding(16.dp)
+            .fillMaxSize()
+            .background(Color(0xFFADB5D9)) // Aquí tu nuevo color de fondo
+            .padding(16.dp)
     ) {
 
 
