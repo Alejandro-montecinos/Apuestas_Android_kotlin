@@ -13,11 +13,7 @@ class RuletaRepository {
 
     fun generarColor() : Boolean= Random.nextBoolean()
 
-    fun guardaHistorial(numRuleta : Int?,colorRul : Boolean?, numAdiv:Int?, estado: Boolean?,jugada: Int?): List<Ruleta>{
-        var ruleta = Ruleta(numRuleta,colorRul, numAdiv,estado,jugada)
-        historial.add(ruleta)
-       return historial
-    }
+
 
 
 
