@@ -1,6 +1,7 @@
 package com.example.apuestas.ui
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
@@ -9,6 +10,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SmallTopAppBar
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -16,7 +18,8 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.example.apuestas.R
-import androidx.compose.material3.SmallTopAppBar
+import androidx.compose.ui.graphics.Color
+
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -26,12 +29,19 @@ fun MenuPrincipalScreen(
 ) {
     Scaffold(
         topBar = {
-            SmallTopAppBar(title = { Text("Bienvenido!") })
+            SmallTopAppBar(
+                title = { Text("Bienvenido!") },
+                colors = TopAppBarDefaults.smallTopAppBarColors(
+                    containerColor = Color(0xFF848BAD)
+                )
+            )
+
         }
     ) { padding ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
+                .background(Color(0xFFADB5D9))
                 .padding(padding)
                 .padding(16.dp)
         ) {

@@ -2,6 +2,7 @@ package com.example.apuestas.ui
 
 import android.widget.Toast
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
@@ -21,7 +22,7 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.apuestas.R
-import com.example.apuestas.ui.theme.miColor
+import com.example.apuestas.ui.theme.colorAzul
 import com.example.apuestas.viewmodel.LoginViewModel
 
 @Composable
@@ -31,8 +32,8 @@ fun LoginScreen(
 ) {
     val context = LocalContext.current
 
-    val iconTintColor = Color(0xFF300B0B)
-    val inputTextColor = Color(0xFF300B0B)
+    val iconTintColor = Color(0xFF1D1F2A)
+    val inputTextColor = Color(0xFF1D1F2A)
 
     var correo by remember { mutableStateOf("") }
     var contrasena by remember { mutableStateOf("") }
@@ -45,6 +46,7 @@ fun LoginScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
+            .background(Color(0xFFADB5D9))
             .padding(24.dp),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
@@ -60,7 +62,7 @@ fun LoginScreen(
         OutlinedTextField(
             value = correo,
             onValueChange = { correo = it },
-            label = { Text("Correo electrónico", color = miColor) },
+            label = { Text("Correo electrónico", color = colorAzul) },
             leadingIcon = { Icon(Icons.Filled.Email, contentDescription = null, tint = iconTintColor) },
             textStyle = TextStyle(color = inputTextColor),
             isError = !correoValid && correo.isNotEmpty(),
@@ -82,7 +84,7 @@ fun LoginScreen(
         OutlinedTextField(
             value = contrasena,
             onValueChange = { contrasena = it },
-            label = { Text("Contraseña", color = miColor) },
+            label = { Text("Contraseña", color = colorAzul) },
             leadingIcon = { Icon(Icons.Filled.Lock, contentDescription = null, tint = iconTintColor) },
             textStyle = TextStyle(color = inputTextColor),
             isError = !contrasenaValid && contrasena.isNotEmpty(),
@@ -116,8 +118,8 @@ fun LoginScreen(
                 .fillMaxWidth()
                 .height(50.dp),
             colors = ButtonDefaults.buttonColors(
-                containerColor = if (formValid) Color(0xFFFFA726) else miColor,
-                contentColor = if (formValid) Color.Black else miColor
+                containerColor = if (formValid) Color(0xFFFFA726) else colorAzul,
+                contentColor = if (formValid) Color.Black else colorAzul
             ),
             shape = RoundedCornerShape(8.dp),
             elevation = ButtonDefaults.buttonElevation(defaultElevation = 8.dp)

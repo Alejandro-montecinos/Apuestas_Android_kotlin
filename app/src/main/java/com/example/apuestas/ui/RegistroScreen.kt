@@ -23,7 +23,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.apuestas.ui.theme.miColor
+import com.example.apuestas.ui.theme.colorAzul
 import com.example.apuestas.viewmodel.RegistroViewModel
 
 @Composable
@@ -34,8 +34,8 @@ fun RegistroScreen(
     val context = LocalContext.current
     val uiState = registroViewModel.uiState
 
-    val iconTintColor = Color(0xFF300B0B)
-    val inputTextColor = Color(0xFF300B0B)
+    val iconTintColor = Color(0xFF1D1F2A)
+    val inputTextColor = Color(0xFF1D1F2A)
 
     val paises = listOf("Chile", "Argentina", "Perú", "México", "España")
     val monedas = mapOf(
@@ -63,17 +63,18 @@ fun RegistroScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
+            .background(Color(0xFFADB5D9))
             .padding(24.dp),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text("Registro", color = miColor, fontSize = 24.sp)
+        Text("Registro", color = colorAzul, fontSize = 24.sp)
         Spacer(modifier = Modifier.height(16.dp))
 
         OutlinedTextField(
             value = uiState.nombre,
             onValueChange = { registroViewModel.onNombreChange(it) },
-            label = { Text("Nombre completo", color = miColor) },
+            label = { Text("Nombre completo", color = colorAzul) },
             textStyle = TextStyle(color = inputTextColor),
             leadingIcon = { Icon(Icons.Filled.Person, contentDescription = null, tint = iconTintColor) },
             isError = !nombreValid && uiState.nombre.isNotEmpty(),
@@ -93,7 +94,7 @@ fun RegistroScreen(
         OutlinedTextField(
             value = uiState.correo,
             onValueChange = { registroViewModel.onCorreoChange(it) },
-            label = { Text("Correo electrónico", color = miColor) },
+            label = { Text("Correo electrónico", color = colorAzul) },
             leadingIcon = { Icon(Icons.Filled.Email, contentDescription = null, tint = iconTintColor) },
             textStyle = TextStyle(color = inputTextColor),
             isError = !correoValid && uiState.correo.isNotEmpty(),
@@ -105,6 +106,7 @@ fun RegistroScreen(
                 cursorColor = Color.White,
                 focusedLabelColor = Color.LightGray,
                 unfocusedLabelColor = Color.LightGray
+
             )
         )
         if (!correoValid && uiState.correo.isNotEmpty()) Text("Correo inválido", color = Color.Red)
@@ -113,7 +115,7 @@ fun RegistroScreen(
         OutlinedTextField(
             value = uiState.contrasena,
             onValueChange = { registroViewModel.onContrasenaChange(it) },
-            label = { Text("Contraseña", color = miColor) },
+            label = { Text("Contraseña", color = colorAzul) },
             leadingIcon = { Icon(Icons.Filled.Lock, contentDescription = null, tint = iconTintColor) },
             textStyle = TextStyle(color = inputTextColor),
             isError = uiState.contrasena.length < 6 && uiState.contrasena.isNotEmpty(),
@@ -137,7 +139,7 @@ fun RegistroScreen(
         OutlinedTextField(
             value = uiState.edad,
             onValueChange = { registroViewModel.onEdadChange(it.filter { c -> c.isDigit() }) },
-            label = { Text("Edad", color = miColor) },
+            label = { Text("Edad", color = colorAzul) },
             leadingIcon = { Icon(Icons.Filled.Person, contentDescription = null, tint = iconTintColor) },
             textStyle = TextStyle(color = inputTextColor),
             isError = !edadValid && uiState.edad.isNotEmpty(),
@@ -158,7 +160,7 @@ fun RegistroScreen(
         OutlinedTextField(
             value = uiState.telefono,
             onValueChange = { registroViewModel.onTelefonoChange(it) },
-            label = { Text("Teléfono", color = miColor) },
+            label = { Text("Teléfono", color = colorAzul) },
             leadingIcon = { Icon(Icons.Filled.Phone, contentDescription = null, tint = iconTintColor) },
             textStyle = TextStyle(color = inputTextColor),
             isError = !telefonoValid && uiState.telefono.isNotEmpty(),
@@ -246,8 +248,8 @@ fun RegistroScreen(
                 .fillMaxWidth()
                 .height(50.dp),
             colors = ButtonDefaults.buttonColors(
-                containerColor = if (formValid) Color(0xFFFFA726) else miColor,
-                contentColor = if (formValid) Color.Black else miColor
+                containerColor = if (formValid) Color(0xFFFFA726) else colorAzul,
+                contentColor = if (formValid) Color.Black else colorAzul
             ),
             elevation = ButtonDefaults.buttonElevation(defaultElevation = 8.dp)
         ) {
