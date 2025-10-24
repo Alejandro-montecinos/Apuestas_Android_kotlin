@@ -33,8 +33,11 @@ import androidx.compose.runtime.mutableStateOf
 import com.example.apuestas.viewmodel.RuletaViewModel
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.layout.ContentScale
+import androidx.navigation.NavHostController
 import com.example.apuestas.R
 
 
@@ -42,7 +45,7 @@ import com.example.apuestas.R
 
 
 @Composable
-fun RuletaScreen(){
+fun RuletaScreen(navController: NavHostController){
 
     var ruletaview = RuletaViewModel()
 
@@ -61,9 +64,13 @@ fun RuletaScreen(){
     val numeroIngresado: Int = numeroTexto.toIntOrNull() ?: 0
 
     Column(
+
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
         modifier = Modifier.fillMaxSize().padding(16.dp)
+            .fillMaxSize()
+            .background(Color(0xFFADB5D9)) // Aquí tu nuevo color de fondo
+            .padding(16.dp)
     ) {
 
 
@@ -196,7 +203,7 @@ fun RuletaScreen(){
             Button(
                 onClick = {
                     if (colorSeleccionado != null) {
-                        if (ruletaview.aposarColor(colorSeleccionado!!)) {
+                        if (ruletaview.apostarColor(colorSeleccionado!!)) {
                             mostrarAlerta = true
                             mensajePerder2 = ""
                             contadorPerdidas2 = 0
@@ -242,10 +249,17 @@ fun RuletaScreen(){
 
 
 
+        Button(onClick = {
+            navController.popBackStack("inicio", inclusive = false)
+            mensajePerder2 = ""
+            contadorPerdidas2 = 0
+            dineroPerdido2=0
+            mensajePerder = ""
 
 
-
-
+        }) {
+            Text("Volver")
+        }
 
 
 

@@ -15,6 +15,9 @@ fun NavGraph(
     navController: NavHostController = rememberNavController(),
     registroViewModel: RegistroViewModel = viewModel(),
     loginViewModel: LoginViewModel = viewModel()
+
+
+
 ) {
     NavHost(navController = navController, startDestination = "registro") {
         composable("registro") {
@@ -31,14 +34,19 @@ fun NavGraph(
         }
         composable("inicio") {
             MenuPrincipalScreen(
-                onIrARuleta = { navController.navigate("ruleta") }
+                onIrARuleta = { navController.navigate("ruleta") },
+                onIrABuscagana = { navController.navigate("buscagana")}
             )
         }
 
 
-
         composable("ruleta") {
-            RuletaScreen()
+            RuletaScreen(navController = navController)
         }
+
+        composable("buscagana") {
+            BuscaganaScreen( Buscagana = { navController.popBackStack() })
+        }
+
     }
 }
