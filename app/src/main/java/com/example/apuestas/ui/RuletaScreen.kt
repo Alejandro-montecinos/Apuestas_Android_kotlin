@@ -58,7 +58,6 @@ fun RuletaScreen(navController: NavHostController){
     var dineroPerdido by remember { mutableStateOf(0) }
     var dineroPerdido2 by remember { mutableStateOf(0) }
     var colorSeleccionado by remember { mutableStateOf<Boolean?>(null) }
-    var btmVolver by remember { mutableStateOf(false) }
 
 
     // Convierte a Int si es posible, o 0
@@ -204,7 +203,7 @@ fun RuletaScreen(navController: NavHostController){
             Button(
                 onClick = {
                     if (colorSeleccionado != null) {
-                        if (ruletaview.aposarColor(colorSeleccionado!!)) {
+                        if (ruletaview.apostarColor(colorSeleccionado!!)) {
                             mostrarAlerta = true
                             mensajePerder2 = ""
                             contadorPerdidas2 = 0

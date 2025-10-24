@@ -34,18 +34,19 @@ fun NavGraph(
         }
         composable("inicio") {
             MenuPrincipalScreen(
-                onIrARuleta = { navController.navigate("ruleta") }
+                onIrARuleta = { navController.navigate("ruleta") },
+                onIrABuscagana = { navController.navigate("buscagana")}
             )
         }
-
 
 
         composable("ruleta") {
             RuletaScreen(navController = navController)
         }
 
-
-
+        composable("buscagana") {
+            BuscaganaScreen( Buscagana = { navController.popBackStack() })
+        }
 
     }
 }

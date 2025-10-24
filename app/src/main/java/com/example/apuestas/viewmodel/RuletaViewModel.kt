@@ -15,7 +15,7 @@ class RuletaViewModel{
         }else return false
     }
 
-    fun aposarColor(colorAdiv: Boolean): Boolean{
+    fun apostarColor(colorAdiv: Boolean): Boolean{
 
         if(colorAdiv == rulRepo.generarColor()){
             return true
