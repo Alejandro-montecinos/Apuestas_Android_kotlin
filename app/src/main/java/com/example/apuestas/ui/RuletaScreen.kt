@@ -63,6 +63,8 @@ fun RuletaScreen(navController: NavHostController){
     // Convierte a Int si es posible, o 0
     val numeroIngresado: Int = numeroTexto.toIntOrNull() ?: 0
 
+
+
     Column(
 
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -72,6 +74,22 @@ fun RuletaScreen(navController: NavHostController){
             .background(Color(0xFFADB5D9)) // Aquí tu nuevo color de fondo
             .padding(16.dp)
     ) {
+
+        Row(
+            horizontalArrangement = Arrangement.Start,
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Button(onClick = {
+                navController.popBackStack("inicio", inclusive = false)
+                mensajePerder2 = ""
+                contadorPerdidas2 = 0
+                dineroPerdido2 = 0
+                mensajePerder = ""
+            }) {
+                Text("Volver")
+            }
+        }
+
 
 
         Text(
@@ -249,17 +267,7 @@ fun RuletaScreen(navController: NavHostController){
 
 
 
-        Button(onClick = {
-            navController.popBackStack("inicio", inclusive = false)
-            mensajePerder2 = ""
-            contadorPerdidas2 = 0
-            dineroPerdido2=0
-            mensajePerder = ""
 
-
-        }) {
-            Text("Volver")
-        }
 
 
 
