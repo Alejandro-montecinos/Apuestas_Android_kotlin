@@ -6,5 +6,6 @@ data class RegistroUiState(
     val edad: String = "",
     val telefono: String = "",
     val pais: String = "",
-    val moneda: String = ""
+    val moneda: String = "",
+    val monto: Double
 )
