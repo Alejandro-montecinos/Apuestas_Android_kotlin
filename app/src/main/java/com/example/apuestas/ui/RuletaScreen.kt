@@ -34,9 +34,12 @@ import com.example.apuestas.viewmodel.RuletaViewModel
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.layout.ContentScale
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.example.apuestas.R
 
@@ -45,229 +48,203 @@ import com.example.apuestas.R
 
 
 @Composable
-fun RuletaScreen(navController: NavHostController){
+fun RuletaScreen(
+    navController: NavHostController,
+    ruletaview: RuletaViewModel = viewModel()
+) {
+    var iduser by remember { mutableStateOf("") }
+    val montoUsuario by ruletaview.montoUsuario.collectAsState()
+    var saldoConsultado by remember { mutableStateOf<Double?>(null) }
+    var mostrarApuesta by remember { mutableStateOf(false) }
+    var montoApuestaTexto by remember { mutableStateOf("") }
+    var esperando by remember { mutableStateOf(false) }
+    var resultado by remember { mutableStateOf<String?>(null) }
+    var saldoResultante by remember { mutableStateOf<Double?>(null) }
+    var mensajeErrorApuesta by remember { mutableStateOf("") }
+    var iniciarCuentaRegresiva by remember { mutableStateOf(false) }
+    var segundosRestantes by remember { mutableStateOf(4) }
 
-    var ruletaview = RuletaViewModel()
-
-    var numeroTexto by remember { mutableStateOf("") }
-    var mensajePerder2 by remember { mutableStateOf("") }
-    var mensajePerder by remember { mutableStateOf("") }
-    var mostrarAlerta by remember { mutableStateOf(false) }
-    var contadorPerdidas by remember { mutableStateOf(0) }
-    var contadorPerdidas2 by remember { mutableStateOf(0) }
-    var dineroPerdido by remember { mutableStateOf(0) }
-    var dineroPerdido2 by remember { mutableStateOf(0) }
-    var colorSeleccionado by remember { mutableStateOf<Boolean?>(null) }
-
-
-    // Convierte a Int si es posible, o 0
-    val numeroIngresado: Int = numeroTexto.toIntOrNull() ?: 0
+    // ----- Cuenta regresiva y lógica de apuesta -----
+    if (iniciarCuentaRegresiva) {
+        LaunchedEffect(Unit) {
+            esperando = true
+            for (i in 4 downTo 1) {
+                resultado = "Jugando... $i"
+                segundosRestantes = i
+                kotlinx.coroutines.delay(1000)
+            }
+            val montoApostar = montoApuestaTexto.toDoubleOrNull() ?: 0.0
+            val gano = (0..1).random() == 1
+            if (gano) {
+                resultado = "¡Ganaste!"
+                saldoResultante = saldoConsultado!! + montoApostar
+            } else {
+                resultado = "Perdiste."
+                saldoResultante = saldoConsultado!! - montoApostar
+            }
+            esperando = false
+            saldoConsultado = saldoResultante
+            iniciarCuentaRegresiva = false
+        }
+    }
 
     Column(
-
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center,
-        modifier = Modifier.fillMaxSize().padding(16.dp)
+        modifier = Modifier
             .fillMaxSize()
-            .background(Color(0xFFADB5D9)) // Aquí tu nuevo color de fondo
-            .padding(16.dp)
+            .background(Color(0xFFADB5D9))
+            .padding(16.dp),
     ) {
-
-
         Text(
             text = "Juego Ruleta",
             style = MaterialTheme.typography.headlineLarge,
-            modifier = Modifier.padding(bottom = 16.dp)
+            modifier = Modifier.padding(vertical = 16.dp)
+        )
 
+        OutlinedTextField(
+            value = iduser,
+            onValueChange = { iduser = it.filter { it.isDigit() } },
+            label = { Text("Ingrese el ID del usuario") },
+            modifier = Modifier.fillMaxWidth()
+        )
+        Button(
+            onClick = {
+                val idInt = iduser.toIntOrNull()
+                if (idInt != null) {
+                    ruletaview.cargarMontoUsuario(idInt)
+                }
+            },
+            modifier = Modifier.padding(top = 8.dp)
+        ) {
+            Text("Consultar Saldo")
+        }
+
+        Spacer(modifier = Modifier.height(8.dp))
+        Button(
+            onClick = {
+                saldoConsultado = montoUsuario
+                resultado = null
+            },
+            enabled = montoUsuario != null
+        ) {
+            Text("Guardar Saldo Consultado")
+        }
+
+        Text(
+            text = "Saldo actual: ${(saldoConsultado?.toString() ?: "Sin saldar")}",
+            style = MaterialTheme.typography.titleMedium,
+            modifier = Modifier.padding(top = 12.dp)
         )
 
         Image(
-            painter = painterResource(id = R.drawable.ruletabyn), // tu imagen sin la extensión
+            painter = painterResource(id = R.drawable.ruletabyn),
             contentDescription = "ruletabyn",
             modifier = Modifier
                 .fillMaxWidth()
-                .height(300.dp)
-                .padding(bottom = 16.dp),
+                .height(200.dp)
+                .padding(vertical = 16.dp),
             contentScale = ContentScale.Crop
         )
 
-
-
-        OutlinedTextField(
-            value = numeroTexto,
-            onValueChange = { nuevoTexto ->
-                // Permitir solo dígitos
-                if (nuevoTexto.all { it.isDigit() }) {
-                    // Limitar a números entre 0 y 37
-                    val numero = nuevoTexto.toIntOrNull()
-                    if (numero != null && numero <= 37) {
-                        numeroTexto = nuevoTexto
-                    } else if (nuevoTexto.isEmpty()) {
-                        numeroTexto = ""
-                    }
-                }
-            },
-            label = { Text("Ingresa un número (0-37)") },
-            modifier = Modifier.fillMaxWidth()
-            )
-
-
-
-        Spacer(modifier = Modifier.height(16.dp))
-
         Button(
             onClick = {
-                if (ruletaview.apostarNumero(numeroIngresado)){
-                    mostrarAlerta = true
-                    mensajePerder = ""
-                }else{
-                    dineroPerdido = dineroPerdido + 500
-                    contadorPerdidas++
-                    mensajePerder = "¡Perdiste!. Intentos $contadorPerdidas"
-
+                if (saldoConsultado != null) {
+                    mostrarApuesta = true
+                    montoApuestaTexto = ""
+                    resultado = null
+                    mensajeErrorApuesta = ""
                 }
-            }
-
-
-        ){
-            Text("Jugar")
+            },
+            enabled = saldoConsultado != null && !esperando,
+            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF00897B))
+        ) {
+            Text("Apostar")
         }
 
-        Spacer(modifier = Modifier.height(16.dp))
-
-
-        if (mensajePerder.isNotEmpty()){
-            Text(mensajePerder)
-            Text("Menos $dineroPerdido")
-        }
-
-        if (mostrarAlerta) {
-            contadorPerdidas = 0
-            dineroPerdido = 0
+        if (mostrarApuesta) {
             AlertDialog(
-                onDismissRequest = { mostrarAlerta = false },
-                title = { Text("¡Ganaste!") },
-                text = { Text("Felicidades, acertaste el número. y ganaste 10.000 USD") },
-                confirmButton = {
-                    Button(onClick = { mostrarAlerta = false }) {
-                        Text("OK")
+                onDismissRequest = {
+                    if (!esperando) {
+                        mostrarApuesta = false
+                        resultado = null
+                        mensajeErrorApuesta = ""
                     }
-                }
-            )
-        }
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-
-
-
-
-            Text(
-                text = "Apuesta por un color",
-                style = MaterialTheme.typography.headlineSmall,
-                modifier = Modifier.padding(bottom = 16.dp)
-            )
-
-            //  Fila con botones de color
-            Row(
-                horizontalArrangement = Arrangement.spacedBy(16.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                // Boton rojo
-                Button(
-                    onClick = { colorSeleccionado = true },
-                    modifier = Modifier.weight(1f),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = androidx.compose.ui.graphics.Color.Red),
-                    shape = androidx.compose.foundation.shape.RoundedCornerShape(0.dp)
-
-
-                ) {
-                    Text("Rojo")
-                }
-                //boton azul
-                Button(
-                    onClick = { colorSeleccionado = false }, // Negro
-                    modifier = Modifier.weight(1f),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = androidx.compose.ui.graphics.Color.Black),
-                    shape = androidx.compose.foundation.shape.RoundedCornerShape(0.dp)
-                ) {
-                    Text("Negro")
-                }
-            }
-
-            Spacer(modifier = Modifier.height(24.dp))
-
-            //  Botón Jugar
-            Button(
-                onClick = {
-                    if (colorSeleccionado != null) {
-                        if (ruletaview.apostarColor(colorSeleccionado!!)) {
-                            mostrarAlerta = true
-                            mensajePerder2 = ""
-                            contadorPerdidas2 = 0
-                            dineroPerdido2=0
-
-
-                        } else {
-                            contadorPerdidas2++
-                            dineroPerdido2 = dineroPerdido2 + 100
-                            mensajePerder2 = "¡Perdiste!. $contadorPerdidas2"
-
+                },
+                title = { Text("Apuesta rápida") },
+                text = {
+                    Column {
+                        Text("¿Cuánto deseas apostar?")
+                        OutlinedTextField(
+                            value = montoApuestaTexto,
+                            onValueChange = {
+                                if (it.all { c -> c.isDigit() }) montoApuestaTexto = it
+                            },
+                            label = { Text("Monto a apostar") }
+                        )
+                        if (mensajeErrorApuesta.isNotEmpty())
+                            Text(mensajeErrorApuesta, color = Color.Red)
+                        if (resultado != null) {
+                            Spacer(modifier = Modifier.height(8.dp))
+                            if (resultado!!.startsWith("Jugando")) {
+                                Text("Jugando... $segundosRestantes", style = MaterialTheme.typography.bodyMedium)
+                            } else if (resultado == "¡Ganaste!") {
+                                Text(
+                                    "¡Ganaste $montoApuestaTexto!\nSaldo nuevo: $saldoResultante",
+                                    color = Color(0xFF388E3C), style = MaterialTheme.typography.bodyLarge
+                                )
+                            } else if (resultado == "Perdiste.") {
+                                Text(
+                                    "Perdiste $montoApuestaTexto\nSaldo nuevo: $saldoResultante",
+                                    color = Color.Red, style = MaterialTheme.typography.bodyLarge
+                                )
+                            }
                         }
                     }
                 },
-
-            ) {
-                Text("Jugar")
-            }
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-        if (mensajePerder2.isNotEmpty()){
-            Text(mensajePerder2)
-            Text("Menos. $dineroPerdido2 USD")
-        }
-
-
-
-            //Alerta de Ganar
-        if (mostrarAlerta) {
-            AlertDialog(
-                onDismissRequest = { mostrarAlerta = false },
-                title = { Text("🎉 ¡Ganaste!") },
-                text = { Text("Adivinaste el color correcto. Ganaste 300 USD,") },
                 confirmButton = {
-                    Button(onClick = { mostrarAlerta = false }) {
-                        Text("OK")
+                    Button(
+                        onClick = {
+                            val montoApostar = montoApuestaTexto.toDoubleOrNull() ?: 0.0
+                            if (montoApostar <= 0.0) {
+                                mensajeErrorApuesta = "Debes ingresar un monto válido"
+                            } else if (saldoConsultado != null && montoApostar > saldoConsultado!!) {
+                                mensajeErrorApuesta = "No tienes saldo suficiente"
+                            } else if (!esperando) {
+                                mensajeErrorApuesta = ""
+                                resultado = null
+                                iniciarCuentaRegresiva = true
+                            }
+                        },
+                        enabled = !esperando
+                    ) { Text("Jugar") }
+                },
+                dismissButton = {
+                    Button(
+                        onClick = {
+                            mostrarApuesta = false
+                            resultado = null
+                            mensajeErrorApuesta = ""
+                        },
+                        enabled = !esperando
+                    ) {
+                        Text("Cancelar")
                     }
                 }
             )
-
         }
 
+        Spacer(modifier = Modifier.height(32.dp))
 
-
-        Button(onClick = {
-            navController.popBackStack("inicio", inclusive = false)
-            mensajePerder2 = ""
-            contadorPerdidas2 = 0
-            dineroPerdido2=0
-            mensajePerder = ""
-
-
-        }) {
-            Text("Volver")
-        }
-
-
-
+        Button(
+            onClick = {
+                navController.popBackStack("inicio", inclusive = false)
+                // Limpia estados si es necesario
+                iduser = ""
+                saldoConsultado = null
+                resultado = null
+                mostrarApuesta = false
+                mensajeErrorApuesta = ""
+            }
+        ) { Text("Volver") }
     }
-
-
-
-
-
-
 }
