@@ -1,13 +1,13 @@
 package com.example.apuestas.model
 
 data class BuscaganaUiState(
-    val posicionesMinas: Set<Int> = emptySet(),      // índices 0..8
+    val idUsuario: Int? = null,
+    val saldo: Double = 0.0,
+    val posicionesMinas: Set<Int> = emptySet(),
     val posicionesDescubiertas: Set<Int> = emptySet(),
+    val dineroEncontrado: Int = 0,
+    val totalDinero: Int = 6,
     val perdio: Boolean = false,
     val gano: Boolean = false,
-    val finalizo: Boolean = false,                   // usuario tocó "Terminar"
-    val totalMinas: Int = 3,                         // 3 minas
-    val totalDinero: Int = 6                         // 6 casillas con dinero
-) {
-    val dineroEncontrado: Int get() = posicionesDescubiertas.count { it !in posicionesMinas }
-}
+    val finalizo: Boolean = false
+)
