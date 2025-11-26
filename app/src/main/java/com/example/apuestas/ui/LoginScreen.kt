@@ -21,6 +21,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
 import com.example.apuestas.R
 import com.example.apuestas.ui.theme.colorAzul
 import com.example.apuestas.viewmodel.LoginViewModel
@@ -28,7 +29,8 @@ import com.example.apuestas.viewmodel.LoginViewModel
 @Composable
 fun LoginScreen(
     onLoginSuccess: () -> Unit,
-    loginViewModel: LoginViewModel
+    loginViewModel: LoginViewModel,
+    navController: NavHostController
 ) {
     val context = LocalContext.current
 
@@ -126,5 +128,18 @@ fun LoginScreen(
         ) {
             Text("Ingresar", style = MaterialTheme.typography.bodyLarge)
         }
+
+
+        Spacer(Modifier.height(12.dp))
+
+        TextButton(
+            onClick = { navController.navigate("registro") },
+            modifier = Modifier.align(Alignment.CenterHorizontally)
+        ) {
+            Text("¿No tiene un usuario creado?", color = Color.White)
+        }
+
+
+
     }
 }
