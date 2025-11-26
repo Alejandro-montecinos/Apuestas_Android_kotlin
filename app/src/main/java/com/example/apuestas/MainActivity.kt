@@ -16,8 +16,12 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             ApuestasTheme {
-                val navController = rememberNavController()
-                RuletaScreen(navController = navController)
+                val registroViewModel: RegistroViewModel = viewModel()
+                val loginViewModel: LoginViewModel = viewModel()
+                NavGraph(
+                    registroViewModel = registroViewModel,
+                    loginViewModel = loginViewModel
+                )
             }
         }
     }

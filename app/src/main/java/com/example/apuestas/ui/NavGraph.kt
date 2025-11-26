@@ -19,19 +19,24 @@ fun NavGraph(
 
 
 ) {
-    NavHost(navController = navController, startDestination = "registro") {
+    NavHost(navController = navController, startDestination = "login") {
+
+        composable("login") {
+            LoginScreen(
+                navController = navController,
+                onLoginSuccess = { navController.navigate("inicio") },
+                loginViewModel = loginViewModel
+            )
+        }
+
+
         composable("registro") {
             RegistroScreen(
                 onRegistroExitoso = { navController.navigate("login") },
                 registroViewModel = registroViewModel
             )
         }
-        composable("login") {
-            LoginScreen(
-                onLoginSuccess = { navController.navigate("inicio") },
-                loginViewModel = loginViewModel
-            )
-        }
+
         composable("inicio") {
             MenuPrincipalScreen(
                 onIrARuleta = { navController.navigate("ruleta") },
