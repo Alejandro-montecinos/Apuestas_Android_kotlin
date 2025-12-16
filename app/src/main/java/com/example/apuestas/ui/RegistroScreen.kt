@@ -106,7 +106,6 @@ fun RegistroScreen(
                 cursorColor = Color.White,
                 focusedLabelColor = Color.LightGray,
                 unfocusedLabelColor = Color.LightGray
-
             )
         )
         if (!correoValid && uiState.correo.isNotEmpty()) Text("Correo inválido", color = Color.Red)
@@ -237,11 +236,21 @@ fun RegistroScreen(
             enabled = formValid,
             onClick = {
                 if (formValid) {
-                    registroViewModel.guardarUsuario(context)
-                    Toast.makeText(context, "Registro exitoso", Toast.LENGTH_SHORT).show()
-                    onRegistroExitoso()
+                    registroViewModel.registrarUsuario(
+                        onSuccess = {
+                            Toast.makeText(context, "Registro exitoso", Toast.LENGTH_SHORT).show()
+                            onRegistroExitoso()
+                        },
+                        onError = {
+                            Toast.makeText(context, "Error al registrar", Toast.LENGTH_SHORT).show()
+                        }
+                    )
                 } else {
-                    Toast.makeText(context, "Completa todos los campos correctamente", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(
+                        context,
+                        "Completa todos los campos correctamente",
+                        Toast.LENGTH_SHORT
+                    ).show()
                 }
             },
             modifier = Modifier
@@ -258,4 +267,7 @@ fun RegistroScreen(
             Text("Registrarse", style = MaterialTheme.typography.bodyLarge)
         }
     }
+
+
+
 }

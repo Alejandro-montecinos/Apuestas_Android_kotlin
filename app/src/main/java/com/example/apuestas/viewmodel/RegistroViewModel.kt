@@ -1,10 +1,13 @@
 package com.example.apuestas.viewmodel
 
-import android.content.Context
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
+import com.example.apuestas.local.UsuarioDao
+import com.example.apuestas.local.UsuarioEntity
+import kotlinx.coroutines.launch
 
 data class RegistroUiState(
     val nombre: String = "",
@@ -14,10 +17,12 @@ data class RegistroUiState(
     val telefono: String = "",
     val pais: String = "",
     val moneda: String = ""
-
 )
 
-class RegistroViewModel : ViewModel() {
+class RegistroViewModel(
+    private val usuarioDao: UsuarioDao
+) : ViewModel() {
+
     var uiState by mutableStateOf(RegistroUiState())
         private set
 
@@ -29,12 +34,29 @@ class RegistroViewModel : ViewModel() {
     fun onPaisChange(value: String) { uiState = uiState.copy(pais = value) }
     fun onMonedaChange(value: String) { uiState = uiState.copy(moneda = value) }
 
-    fun guardarUsuario(context: Context) {
-        val prefs = context.getSharedPreferences("UserPrefs", Context.MODE_PRIVATE)
-        prefs.edit().apply {
-            putString("correo", uiState.correo)
-            putString("contrasena", uiState.contrasena)
-            apply()
+    fun registrarUsuario(
+        onSuccess: () -> Unit,
+        onError: () -> Unit
+    ) {
+        viewModelScope.launch {
+            try {
+                val usuario = UsuarioEntity(
+                    nombre = uiState.nombre,
+                    correo = uiState.correo,
+                    contrasena = uiState.contrasena,
+                    edad = uiState.edad,
+                    telefono = uiState.telefono,
+                    pais = uiState.pais,
+                    moneda = uiState.moneda,
+                    monto = 0.0,
+                    sesionActiva = true
+                )
+                usuarioDao.cerrarTodasLasSesiones()
+                usuarioDao.insertarUsuario(usuario)
+                onSuccess()
+            } catch (e: Exception) {
+                onError()
+            }
         }
     }
 }

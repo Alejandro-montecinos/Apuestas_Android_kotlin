@@ -1,6 +1,6 @@
 package com.example.apuestas.model
 
-data class RegistroUiState(
+data class Usuario(
     val nombre: String = "",
     val correo: String = "",
     val edad: String = "",

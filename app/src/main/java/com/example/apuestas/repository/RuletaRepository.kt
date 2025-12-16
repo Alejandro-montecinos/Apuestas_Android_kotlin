@@ -1,6 +1,6 @@
 package com.example.apuestas.repository
 
-import com.example.apuestas.model.RegistroUiState
+import com.example.apuestas.model.Usuario
 import com.example.apuestas.model.Ruleta
 import com.example.apuestas.remote.RetrofitInstance
 import kotlin.Int
@@ -23,11 +23,11 @@ class RuletaRepository {
     }
 
 
-    suspend fun getUsuarioPorId(id: Int): RegistroUiState {
+    suspend fun getUsuarioPorId(id: Int): Usuario {
         return RetrofitInstance.api.getUsuarioPorId(id)
     }
 
-    suspend fun actualizarUsuario(id: Int, usuario: RegistroUiState) {
+    suspend fun actualizarUsuario(id: Int, usuario: Usuario) {
         RetrofitInstance.api.actualizarUsuario(id, usuario)
     }
 

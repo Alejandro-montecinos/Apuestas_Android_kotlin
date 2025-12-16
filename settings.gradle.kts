@@ -4,7 +4,11 @@ pluginManagement {
         mavenCentral()
         gradlePluginPortal()
     }
+    plugins {
+        id("com.google.devtools.ksp") version "1.9.22-1.0.16"
+    }
 }
+
 dependencyResolutionManagement {
     repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
     repositories {
@@ -15,4 +19,3 @@ dependencyResolutionManagement {
 
 rootProject.name = "apuestas"
 include(":app")
- 

@@ -109,13 +109,16 @@ fun LoginScreen(
         Button(
             enabled = formValid,
             onClick = {
-                if (loginViewModel.validarUsuario(context, correo, contrasena)) {
-                    Toast.makeText(context, "Login exitoso", Toast.LENGTH_SHORT).show()
-                    onLoginSuccess()
-                } else {
-                    Toast.makeText(context, "Correo o contraseña incorrectos", Toast.LENGTH_SHORT).show()
+                loginViewModel.validarUsuario(correo, contrasena) { ok ->
+                    if (ok) {
+                        Toast.makeText(context, "Login exitoso", Toast.LENGTH_SHORT).show()
+                        onLoginSuccess()
+                    } else {
+                        Toast.makeText(context, "Correo o contraseña incorrectos", Toast.LENGTH_SHORT).show()
+                    }
                 }
-            },
+            }
+            ,
             modifier = Modifier
                 .fillMaxWidth()
                 .height(50.dp),
@@ -128,6 +131,7 @@ fun LoginScreen(
         ) {
             Text("Ingresar", style = MaterialTheme.typography.bodyLarge)
         }
+
 
 
         Spacer(Modifier.height(12.dp))
