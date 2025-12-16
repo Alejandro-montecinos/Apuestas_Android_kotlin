@@ -5,52 +5,38 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Menu
-import androidx.compose.material3.Button
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SmallTopAppBar
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.apuestas.R
-import androidx.compose.ui.tooling.preview.Preview
-import kotlin.Unit
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MenuPrincipalScreen(
+    nombreUsuario: String,
     onIrARuleta: () -> Unit,
     onIrABuscagana: () -> Unit
 ) {
-
-
-
-
+    val nombreUsuario = if (nombreUsuario.isBlank()) "Usuario" else nombreUsuario
 
     Scaffold(
         topBar = {
-            SmallTopAppBar(title = { Text("Bienvenido") },
+            SmallTopAppBar(
+                title = { Text("Bienvenido, ${nombreUsuario.substringBefore(" ")}") },
                 navigationIcon = {
-                    IconButton( onClick = {}) {
+                    IconButton(onClick = {}) {
                         Icon(
                             imageVector = Icons.Default.Menu,
                             contentDescription = "Abrir menú de navegación",
                         )
                     }
-                })
+                }
+            )
         }
     ) { padding ->
         Column(
@@ -59,8 +45,10 @@ fun MenuPrincipalScreen(
                 .padding(padding)
                 .padding(16.dp)
         ) {
+
             Text("Saldo: 5000")
             Spacer(Modifier.height(12.dp))
+
             Text("Juegos disponibles", style = MaterialTheme.typography.titleMedium)
             Spacer(Modifier.height(8.dp))
 
@@ -92,13 +80,12 @@ fun MenuPrincipalScreen(
                         )
                         Spacer(modifier = Modifier.height(8.dp))
                         Text("Buscagana", style = MaterialTheme.typography.titleMedium)
-
                     }
                 }
 
                 // Boton juego 2 Ruleta
                 Button(
-                    onClick = onIrARuleta ,
+                    onClick = onIrARuleta,
                     modifier = Modifier
                         .weight(1f)
                         .aspectRatio(1f),
@@ -119,7 +106,6 @@ fun MenuPrincipalScreen(
                         )
                         Spacer(modifier = Modifier.height(8.dp))
                         Text("Ruleta", style = MaterialTheme.typography.titleMedium)
-
                     }
                 }
             }
@@ -131,6 +117,7 @@ fun MenuPrincipalScreen(
 @Composable
 fun PreviewMenuPrincipal() {
     MenuPrincipalScreen(
+        nombreUsuario = "Boris",
         onIrARuleta = {},
         onIrABuscagana = {}
     )

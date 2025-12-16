@@ -19,6 +19,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
@@ -79,6 +80,10 @@ fun RegistroScreen(
             leadingIcon = { Icon(Icons.Filled.Person, contentDescription = null, tint = iconTintColor) },
             isError = !nombreValid && uiState.nombre.isNotEmpty(),
             modifier = Modifier.fillMaxWidth(),
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text,
+                capitalization = KeyboardCapitalization.Words),
+            singleLine = true,
+            maxLines = 1,
             colors = OutlinedTextFieldDefaults.colors(
                 focusedBorderColor = Color(0xFFFFA726),
                 unfocusedBorderColor = Color.Black,
@@ -99,6 +104,9 @@ fun RegistroScreen(
             textStyle = TextStyle(color = inputTextColor),
             isError = !correoValid && uiState.correo.isNotEmpty(),
             modifier = Modifier.fillMaxWidth(),
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
+            singleLine = true,
+            maxLines = 1,
             colors = OutlinedTextFieldDefaults.colors(
                 focusedBorderColor = Color(0xFFFFA726),
                 unfocusedBorderColor = Color.Black,
@@ -106,7 +114,6 @@ fun RegistroScreen(
                 cursorColor = Color.White,
                 focusedLabelColor = Color.LightGray,
                 unfocusedLabelColor = Color.LightGray
-
             )
         )
         if (!correoValid && uiState.correo.isNotEmpty()) Text("Correo inválido", color = Color.Red)
@@ -122,6 +129,8 @@ fun RegistroScreen(
             modifier = Modifier.fillMaxWidth(),
             visualTransformation = PasswordVisualTransformation(),
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+            singleLine = true,
+            maxLines = 1,
             colors = OutlinedTextFieldDefaults.colors(
                 focusedBorderColor = Color(0xFFFFA726),
                 unfocusedBorderColor = Color.Black,
@@ -166,6 +175,8 @@ fun RegistroScreen(
             isError = !telefonoValid && uiState.telefono.isNotEmpty(),
             modifier = Modifier.fillMaxWidth(),
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone),
+            singleLine = true,
+            maxLines = 1,
             colors = OutlinedTextFieldDefaults.colors(
                 focusedBorderColor = Color(0xFFFFA726),
                 unfocusedBorderColor = Color.Black,
@@ -237,11 +248,21 @@ fun RegistroScreen(
             enabled = formValid,
             onClick = {
                 if (formValid) {
-                    registroViewModel.guardarUsuario(context)
-                    Toast.makeText(context, "Registro exitoso", Toast.LENGTH_SHORT).show()
-                    onRegistroExitoso()
+                    registroViewModel.registrarUsuario(
+                        onSuccess = {
+                            Toast.makeText(context, "Registro exitoso", Toast.LENGTH_SHORT).show()
+                            onRegistroExitoso()
+                        },
+                        onError = {
+                            Toast.makeText(context, "Error al registrar", Toast.LENGTH_SHORT).show()
+                        }
+                    )
                 } else {
-                    Toast.makeText(context, "Completa todos los campos correctamente", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(
+                        context,
+                        "Completa todos los campos correctamente",
+                        Toast.LENGTH_SHORT
+                    ).show()
                 }
             },
             modifier = Modifier
@@ -258,4 +279,5 @@ fun RegistroScreen(
             Text("Registrarse", style = MaterialTheme.typography.bodyLarge)
         }
     }
+
 }

@@ -2,11 +2,10 @@ package com.example.apuestas.ui
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.apuestas.viewmodel.BuscaganaViewModel
@@ -17,23 +16,14 @@ fun BuscaganaScreen(
     Buscagana: () -> Unit = {},
     vm: BuscaganaViewModel = viewModel()
 ) {
-    val estado by vm.uiState.collectAsState()
-    var idInput by remember { mutableStateOf("") }
+    val estado = vm.uiState
 
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
                 title = { Text("Buscagana") },
-                navigationIcon = {
-                    TextButton(onClick = Buscagana) {
-                        Text("Volver")
-                    }
-                },
-                actions = {
-                    TextButton(onClick = vm::reiniciarJuego) {
-                        Text("Reiniciar")
-                    }
-                }
+                navigationIcon = { TextButton(onClick = Buscagana) { Text("Volver") } },
+                actions = { TextButton(onClick = vm::reiniciarJuego) { Text("Reiniciar") } }
             )
         }
     ) { pad ->
@@ -44,35 +34,17 @@ fun BuscaganaScreen(
                 .fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            OutlinedTextField(
-                value = idInput,
-                onValueChange = { idInput = it },
-                label = { Text("ID Usuario") },
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                singleLine = true
-            )
-
-            Spacer(Modifier.height(8.dp))
-
-            Button(onClick = {
-                idInput.toIntOrNull()?.let { vm.actualizarIdUsuario(it) }
-            }) {
-                Text("Cargar saldo")
-            }
-
-            Spacer(Modifier.height(16.dp))
-
-            Text("Saldo: ${estado.saldo}")
-
+            // Estado
             when {
-                estado.perdio -> Text("Perdiste. Reinicia para jugar de nuevo.", color = MaterialTheme.colorScheme.error)
-                estado.gano -> Text("¡Ganaste! Encontraste todas las casillas con dinero.", color = MaterialTheme.colorScheme.primary)
+                estado.perdio   -> Text("Perdiste. Reinicia para jugar de nuevo.", color = MaterialTheme.colorScheme.error)
+                estado.gano     -> Text("Ganaste. Encontraste las 6 casillas con dinero.", color = MaterialTheme.colorScheme.primary)
                 estado.finalizo -> Text("Terminaste con ${estado.dineroEncontrado * 1000} créditos")
-                else -> Text("Toca una casilla: 6 con 💸 y 3 con 💣")
+                else            -> Text("Toca una casilla: 6 son dinero y 3 son minas")
             }
 
             Spacer(Modifier.height(16.dp))
 
+            // Grid 3×3
             CuadriculaBuscagana(
                 habilitado = !estado.perdio && !estado.gano && !estado.finalizo,
                 casillasDescubiertas = estado.posicionesDescubiertas,
@@ -82,12 +54,11 @@ fun BuscaganaScreen(
 
             Spacer(Modifier.height(12.dp))
 
+            // Terminar
             Button(
                 onClick = vm::terminar,
                 enabled = !estado.perdio && !estado.gano && !estado.finalizo && estado.dineroEncontrado > 0
-            ) {
-                Text("Terminar")
-            }
+            ) { Text("Terminar") }
 
             Spacer(Modifier.height(8.dp))
             Text("Dinero descubierto: ${estado.dineroEncontrado} / ${estado.totalDinero}")
@@ -96,14 +67,14 @@ fun BuscaganaScreen(
 }
 
 @Composable
-fun CuadriculaBuscagana(
+private fun CuadriculaBuscagana(
     habilitado: Boolean,
     casillasDescubiertas: Set<Int>,
     posicionesMinas: Set<Int>,
     alTocarCasilla: (Int) -> Unit
 ) {
     val filas = (0 until 9).chunked(3)
-    Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+    Column(verticalArrangement = Arrangement.spacedBy(12.dp), modifier = Modifier.fillMaxWidth()) {
         filas.forEach { fila ->
             Row(horizontalArrangement = Arrangement.spacedBy(12.dp), modifier = Modifier.fillMaxWidth()) {
                 fila.forEach { indice ->
@@ -118,11 +89,15 @@ fun CuadriculaBuscagana(
                         onClick = { alTocarCasilla(indice) },
                         enabled = !descubierta && habilitado,
                         modifier = Modifier.weight(1f).aspectRatio(1f)
-                    ) {
-                        Text(texto, style = MaterialTheme.typography.titleLarge)
-                    }
+                    ) { Text(texto, style = MaterialTheme.typography.titleLarge) }
                 }
             }
         }
     }
+}
+
+@Preview
+@Composable
+private fun PreviewBuscagana() {
+    BuscaganaScreen(Buscagana = {})
 }

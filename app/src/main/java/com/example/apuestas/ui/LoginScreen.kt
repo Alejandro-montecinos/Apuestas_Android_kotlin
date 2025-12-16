@@ -19,6 +19,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
@@ -70,6 +71,8 @@ fun LoginScreen(
             isError = !correoValid && correo.isNotEmpty(),
             modifier = Modifier.fillMaxWidth(),
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
+            singleLine = true,
+            maxLines = 1,
             colors = OutlinedTextFieldDefaults.colors(
                 focusedBorderColor = Color(0xFFFFA726),
                 unfocusedBorderColor = Color.Black,
@@ -93,6 +96,8 @@ fun LoginScreen(
             modifier = Modifier.fillMaxWidth(),
             visualTransformation = PasswordVisualTransformation(),
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+            singleLine = true,
+            maxLines = 1,
             colors = OutlinedTextFieldDefaults.colors(
                 focusedBorderColor = Color(0xFFFFA726),
                 unfocusedBorderColor = Color.Black,
@@ -109,13 +114,16 @@ fun LoginScreen(
         Button(
             enabled = formValid,
             onClick = {
-                if (loginViewModel.validarUsuario(context, correo, contrasena)) {
-                    Toast.makeText(context, "Login exitoso", Toast.LENGTH_SHORT).show()
-                    onLoginSuccess()
-                } else {
-                    Toast.makeText(context, "Correo o contraseña incorrectos", Toast.LENGTH_SHORT).show()
+                loginViewModel.validarUsuario(correo, contrasena) { ok ->
+                    if (ok) {
+                        Toast.makeText(context, "Login exitoso", Toast.LENGTH_SHORT).show()
+                        onLoginSuccess()
+                    } else {
+                        Toast.makeText(context, "Correo o contraseña incorrectos", Toast.LENGTH_SHORT).show()
+                    }
                 }
-            },
+            }
+            ,
             modifier = Modifier
                 .fillMaxWidth()
                 .height(50.dp),
@@ -128,6 +136,7 @@ fun LoginScreen(
         ) {
             Text("Ingresar", style = MaterialTheme.typography.bodyLarge)
         }
+
 
 
         Spacer(Modifier.height(12.dp))
