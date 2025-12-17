@@ -23,7 +23,8 @@ import com.example.apuestas.local.UsuarioEntity
 fun MenuPrincipalScreen(
     nombreUsuario: String,
     onIrARuleta: () -> Unit,
-    onIrABuscagana: () -> Unit
+    onIrABuscagana: () -> Unit,
+    onCerrarSesion: () -> Unit
 ) {
     val context = LocalContext.current
     val usuarioDao = remember { AppDatabase.getInstance(context).usuarioDao() }
@@ -34,17 +35,27 @@ fun MenuPrincipalScreen(
         usuarioActivo = usuarioDao.obtenerUsuarioActivo()
     }
 
-
     Scaffold(
         topBar = {
             SmallTopAppBar(
-                title = { Text("Bienvenido, ${usuarioActivo?.nombre?.substringBefore(" ")}") },
+                title = {
+                    Text(
+                        "Bienvenido, ${
+                            (usuarioActivo?.nombre ?: nombreUsuario).substringBefore(" ")
+                        }"
+                    )
+                },
                 navigationIcon = {
                     IconButton(onClick = {}) {
                         Icon(
                             imageVector = Icons.Default.Menu,
                             contentDescription = "Abrir menú de navegación",
                         )
+                    }
+                },
+                actions = {
+                    TextButton(onClick = onCerrarSesion) {
+                        Text("Cerrar sesión")
                     }
                 }
             )
@@ -57,7 +68,7 @@ fun MenuPrincipalScreen(
                 .padding(16.dp)
         ) {
 
-            Text("Saldo: ${usuarioActivo?.monto}")
+            Text("Saldo: ${usuarioActivo?.monto ?: 0.0}")
             Spacer(Modifier.height(12.dp))
 
             Text("Juegos disponibles", style = MaterialTheme.typography.titleMedium)
@@ -129,6 +140,7 @@ fun PreviewMenuPrincipal() {
     MenuPrincipalScreen(
         nombreUsuario = "Boris",
         onIrARuleta = {},
-        onIrABuscagana = {}
+        onIrABuscagana = {},
+        onCerrarSesion = {}
     )
 }

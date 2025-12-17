@@ -58,51 +58,55 @@ android {
 dependencies {
 
     implementation("androidx.core:core-ktx:1.12.0")
-    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.1")
-    implementation("androidx.activity:activity-compose:1.7.0")
-    implementation(platform("androidx.compose:compose-bom:2023.08.00"))
+
+    // Lifecycle
+    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.7.0")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.7.0")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.7.0")
+    implementation("androidx.lifecycle:lifecycle-runtime-compose:2.7.0")
+
+    // Activity Compose
+    implementation("androidx.activity:activity-compose:1.8.2")
+
+    // Compose BOM compatible con compileSdk 34
+    implementation(platform("androidx.compose:compose-bom:2024.04.01"))
+    androidTestImplementation(platform("androidx.compose:compose-bom:2024.04.01"))
+
     implementation("androidx.compose.ui:ui")
     implementation("androidx.compose.ui:ui-graphics")
     implementation("androidx.compose.ui:ui-tooling-preview")
+    implementation("androidx.compose.foundation:foundation")
     implementation("androidx.compose.material3:material3")
-    implementation("androidx.compose.foundation:foundation-android:1.5.0")
+
+    debugImplementation("androidx.compose.ui:ui-tooling")
+    debugImplementation("androidx.compose.ui:ui-test-manifest")
+    androidTestImplementation("androidx.compose.ui:ui-test-junit4")
 
 
+    // imblementacion para gif
+
+    implementation("io.coil-kt:coil-compose:2.5.0")
+    implementation("io.coil-kt:coil-gif:2.5.0")
+
+
+
+    // Navigation Compose
+    implementation("androidx.navigation:navigation-compose:2.7.4")
+
+    // Retrofit
+    implementation("com.squareup.retrofit2:retrofit:2.9.0")
+    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
+
+    // Room
+    val room_version = "2.6.1"
+    implementation("androidx.room:room-runtime:$room_version")
+    implementation("androidx.room:room-ktx:$room_version")
+    ksp("androidx.room:room-compiler:$room_version")
 
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
-    androidTestImplementation(platform("androidx.compose:compose-bom:2023.08.00"))
-    androidTestImplementation("androidx.compose.ui:ui-test-junit4")
-    debugImplementation("androidx.compose.ui:ui-tooling")
-    debugImplementation("androidx.compose.ui:ui-test-manifest")
 
-    implementation ("androidx.lifecycle:lifecycle-viewmodel-compose:2.8.5")
-    implementation ("androidx.lifecycle:lifecycle-viewmodel-ktx:2.8.5")
-    implementation ("androidx.lifecycle:lifecycle-runtime-ktx:2.8.5")
-    implementation ("androidx.compose.material3:material3:1.1.0")
-    implementation ("androidx.compose.ui:ui:1.6.4")
-    implementation ("androidx.activity:activity-compose:1.8.2")
-
-    implementation("com.squareup.retrofit2:retrofit:2.9.0")
-    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
-
-    implementation("androidx.compose.material3:material3:1.1.0")
-
-    implementation("androidx.navigation:navigation-compose:2.7.4")
-
-    implementation("androidx.compose.material3:material3:1.2.0")
-
-
-// room sacado de la documentacion de google
-
-
-
-    val room_version = "2.6.1" // versión estable recomendada
-
-    implementation("androidx.room:room-runtime:$room_version")
-    implementation("androidx.room:room-ktx:$room_version")
-    ksp("androidx.room:room-compiler:$room_version")
 
 
 
