@@ -14,9 +14,9 @@ import kotlinx.coroutines.launch
 class LoginViewModel(
     private val usuarioDao: UsuarioDao,
     private val api: ApiService
+
 ) : ViewModel() {
 
-    // ✅ Nombre del usuario logeado (para mostrarlo en el menú)
     var nombreUsuario by mutableStateOf("")
         private set
 
@@ -69,6 +69,11 @@ class LoginViewModel(
             }
         }
     }
+
+    fun actualizarNombreUsuario(nombre: String) {
+        nombreUsuario = nombre
+    }
+
 
     fun cerrarSesion(onDone: () -> Unit) {
         viewModelScope.launch {

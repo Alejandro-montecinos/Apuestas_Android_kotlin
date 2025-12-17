@@ -13,21 +13,30 @@ import com.example.apuestas.viewmodel.RegistroViewModel
 fun NavGraph(
     navController: NavHostController = rememberNavController(),
     registroViewModel: RegistroViewModel = viewModel(),
-    loginViewModel: LoginViewModel = viewModel()
+    loginViewModel: LoginViewModel = viewModel(),
+    startDestination: String = "login"
 ) {
-    NavHost(navController = navController, startDestination = "login") {
+    NavHost(navController = navController, startDestination = startDestination) {
 
         composable("login") {
             LoginScreen(
                 navController = navController,
-                onLoginSuccess = { navController.navigate("inicio") },
+                onLoginSuccess = {
+                    navController.navigate("inicio") {
+                        popUpTo("login") { inclusive = true }
+                    }
+                },
                 loginViewModel = loginViewModel
             )
         }
 
         composable("registro") {
             RegistroScreen(
-                onRegistroExitoso = { navController.navigate("inicio") },
+                onRegistroExitoso = {
+                    navController.navigate("inicio") {
+                        popUpTo("login") { inclusive = true }
+                    }
+                },
                 registroViewModel = registroViewModel
             )
         }
