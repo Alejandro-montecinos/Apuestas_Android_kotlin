@@ -16,7 +16,7 @@ class LoginViewModel(
     private val api: ApiService
 ) : ViewModel() {
 
-    // ✅ Nombre del usuario logeado (para mostrarlo en el menú)
+    // Nombre del usuario logeado (para mostrarlo en el menú)
     var nombreUsuario by mutableStateOf("")
         private set
 
@@ -32,7 +32,7 @@ class LoginViewModel(
                 usuarioDao.cerrarTodasLasSesiones()
                 usuarioDao.insertarUsuario(local.copy(sesionActiva = true))
 
-                // ✅ Guardar nombre para el menú
+                // Guardar nombre para el menú
                 nombreUsuario = local.nombre
 
                 onResult(true)
@@ -59,7 +59,7 @@ class LoginViewModel(
                 usuarioDao.cerrarTodasLasSesiones()
                 usuarioDao.insertarUsuario(entity)
 
-                // ✅ Guardar nombre para el menú
+                //Guardar nombre para el menú
                 nombreUsuario = response.nombre
 
                 onResult(true)
