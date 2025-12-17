@@ -6,6 +6,7 @@ import androidx.activity.compose.setContent
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.compose.rememberNavController
 import com.example.apuestas.local.AppDatabase
 import com.example.apuestas.remote.RetrofitInstance
@@ -13,6 +14,8 @@ import com.example.apuestas.ui.NavGraph
 import com.example.apuestas.ui.theme.ApuestasTheme
 import com.example.apuestas.viewmodel.LoginViewModel
 import com.example.apuestas.viewmodel.RegistroViewModel
+import com.example.apuestas.viewmodel.RuletaViewModel
+import com.example.apuestas.viewmodel.RuletaViewModelFactory
 import com.example.apuestas.viewmodel.StartupViewModel
 
 class MainActivity : ComponentActivity() {
@@ -30,6 +33,13 @@ class MainActivity : ComponentActivity() {
                 val loginViewModel = remember { LoginViewModel(usuarioDao, RetrofitInstance.api) }
                 val startupViewModel = remember { StartupViewModel(usuarioDao) }
 
+                // NUEVO: RuletaViewModel
+                val ruletaViewModel = remember {
+                    val factory = RuletaViewModelFactory(usuarioDao, RetrofitInstance.api)
+                    ViewModelProvider(this, factory).get(RuletaViewModel::class.java)
+                }
+
+
                 // Chequear si hay usuario logueado al iniciar
                 LaunchedEffect(Unit) {
                     startupViewModel.checkLoggedUser { nombre ->
@@ -45,6 +55,7 @@ class MainActivity : ComponentActivity() {
                     navController = navController,
                     registroViewModel = registroViewModel,
                     loginViewModel = loginViewModel,
+                    ruletaViewModel = ruletaViewModel,
                     startDestination = startupViewModel.startDestination
                 )
             }

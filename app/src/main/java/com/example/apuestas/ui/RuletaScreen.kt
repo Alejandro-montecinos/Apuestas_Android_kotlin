@@ -22,10 +22,11 @@ import kotlinx.coroutines.delay
 import androidx.compose.foundation.shape.RoundedCornerShape
 
 
+
 @Composable
 fun RuletaScreen(
     navController: NavHostController,
-    ruletaview: RuletaViewModel = viewModel()
+    ruletaview: RuletaViewModel
 ) {
     val context = LocalContext.current
     val usuarioDao = remember { AppDatabase.getInstance(context).usuarioDao() }
@@ -100,11 +101,21 @@ fun RuletaScreen(
                 saldoResultante = saldoConsultado!! - montoApostar
             }
 
+            // Actualizar estado local
             esperando = false
             saldoConsultado = saldoResultante
             iniciarCuentaRegresiva = false
+
+            // Actualizar Room + API vía ViewModel
+            usuarioActivo?.let { usuario ->
+                saldoResultante?.let { nuevoSaldo ->
+                    ruletaview.actualizarSaldoDespuesDeJuego(usuario.id, nuevoSaldo)
+                }
+            }
         }
     }
+
+
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
