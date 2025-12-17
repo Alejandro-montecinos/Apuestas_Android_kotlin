@@ -12,6 +12,8 @@ import com.example.apuestas.ui.NavGraph
 import com.example.apuestas.ui.theme.ApuestasTheme
 import com.example.apuestas.viewmodel.LoginViewModel
 import com.example.apuestas.viewmodel.RegistroViewModel
+import androidx.compose.runtime.collectAsState
+import com.example.apuestas.local.UsuarioEntity
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -24,16 +26,23 @@ class MainActivity : ComponentActivity() {
                 val db = remember { AppDatabase.getInstance(context) }
                 val usuarioDao = remember { db.usuarioDao() }
 
+                // 🔹 observar usuario activo de Room
+                val usuarioActivoState =
+                    usuarioDao.observarUsuarioActivo().collectAsState(initial = null)
+                val usuarioActivo: UsuarioEntity? = usuarioActivoState.value
+
                 val registroViewModel = remember { RegistroViewModel(usuarioDao) }
                 val loginViewModel = remember { LoginViewModel(usuarioDao, RetrofitInstance.api) }
 
                 NavGraph(
                     navController = navController,
                     registroViewModel = registroViewModel,
-                    loginViewModel = loginViewModel
+                    loginViewModel = loginViewModel,
+                    usuarioActivo = usuarioActivo
                 )
             }
         }
     }
 }
+
 

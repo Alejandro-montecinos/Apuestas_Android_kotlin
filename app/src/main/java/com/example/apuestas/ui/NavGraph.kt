@@ -7,19 +7,18 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.apuestas.viewmodel.LoginViewModel
 import com.example.apuestas.viewmodel.RegistroViewModel
-import androidx.lifecycle.viewmodel.compose.viewModel
-
+import com.example.apuestas.local.UsuarioEntity
 
 @Composable
 fun NavGraph(
     navController: NavHostController = rememberNavController(),
-    registroViewModel: RegistroViewModel = viewModel(),
-    loginViewModel: LoginViewModel = viewModel()
-
-
-
+    registroViewModel: RegistroViewModel,
+    loginViewModel: LoginViewModel,
+    usuarioActivo: UsuarioEntity?
 ) {
-    NavHost(navController = navController, startDestination = "login") {
+    val startDestination = if (usuarioActivo != null) "inicio" else "login"
+
+    NavHost(navController = navController, startDestination = startDestination) {
 
         composable("login") {
             LoginScreen(
@@ -28,7 +27,6 @@ fun NavGraph(
                 loginViewModel = loginViewModel
             )
         }
-
 
         composable("registro") {
             RegistroScreen(
@@ -40,18 +38,17 @@ fun NavGraph(
         composable("inicio") {
             MenuPrincipalScreen(
                 onIrARuleta = { navController.navigate("ruleta") },
-                onIrABuscagana = { navController.navigate("buscagana")}
+                onIrABuscagana = { navController.navigate("buscagana") }
             )
         }
-
 
         composable("ruleta") {
             RuletaScreen(navController = navController)
         }
 
         composable("buscagana") {
-            BuscaganaScreen( Buscagana = { navController.popBackStack() })
+            BuscaganaScreen(Buscagana = { navController.popBackStack() })
         }
-
     }
 }
+
