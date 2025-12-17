@@ -3,6 +3,7 @@ package com.example.apuestas.ui
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -19,14 +20,11 @@ import com.example.apuestas.local.AppDatabase
 import com.example.apuestas.local.UsuarioEntity
 import com.example.apuestas.viewmodel.RuletaViewModel
 import kotlinx.coroutines.delay
-import androidx.compose.foundation.shape.RoundedCornerShape
-
-
 
 @Composable
 fun RuletaScreen(
     navController: NavHostController,
-    ruletaview: RuletaViewModel
+    ruletaview: RuletaViewModel = viewModel()
 ) {
     val context = LocalContext.current
     val usuarioDao = remember { AppDatabase.getInstance(context).usuarioDao() }
@@ -46,14 +44,17 @@ fun RuletaScreen(
     var resultado by remember { mutableStateOf<String?>(null) }
     var saldoResultante by remember { mutableStateOf<Double?>(null) }
     var mensajeErrorApuesta by remember { mutableStateOf("") }
+
     var iniciarCuentaRegresiva by remember { mutableStateOf(false) }
     var segundosRestantes by remember { mutableStateOf(4) }
 
+    // Cargar usuario activo
     LaunchedEffect(Unit) {
         usuarioActivo = usuarioDao.obtenerUsuarioActivo()
         saldoConsultado = usuarioActivo?.monto
     }
 
+    // Lógica del juego + cuenta regresiva
     if (iniciarCuentaRegresiva) {
         LaunchedEffect(Unit) {
             esperando = true
@@ -66,6 +67,7 @@ fun RuletaScreen(
             val montoApostar = montoApuestaTexto.toDoubleOrNull() ?: 0.0
             val numeroElegido = numeroTexto.toIntOrNull()
             val numeroRuleta = (0..37).random()
+
             val esRojo = numeroRuleta % 2 == 1
             val esNegro = numeroRuleta % 2 == 0
 
@@ -75,22 +77,35 @@ fun RuletaScreen(
                 else -> "negro"
             }
 
+            val apostoNumero = numeroElegido != null
+            val apostoColor = apostarRojo || apostarNegro
+
+            val acertoNumero = apostoNumero && numeroElegido == numeroRuleta
+            val acertoColor = apostoColor &&
+                    ((apostarRojo && esRojo) || (apostarNegro && esNegro))
+
             var gano = false
             var descripcion = "Salió $numeroRuleta ($colorTexto) "
 
-            if (numeroElegido != null && numeroElegido == numeroRuleta) {
-                gano = true
-                descripcion += "(acertaste el número) "
-            }
-
-            if (apostarRojo && esRojo) {
-                gano = true
-                descripcion += "(acertaste rojo) "
-            }
-
-            if (apostarNegro && esNegro) {
-                gano = true
-                descripcion += "(acertaste negro) "
+            // Reglas:
+            // 1) Si apuesta número y color -> ambos deben cumplirse
+            // 2) Si apuesta solo número -> solo número
+            // 3) Si apuesta solo color -> solo color
+            if (apostoNumero && apostoColor) {
+                if (acertoNumero && acertoColor) {
+                    gano = true
+                    descripcion += "(acertaste número y color) "
+                }
+            } else if (apostoNumero) {
+                if (acertoNumero) {
+                    gano = true
+                    descripcion += "(acertaste el número) "
+                }
+            } else if (apostoColor) {
+                if (acertoColor) {
+                    gano = true
+                    descripcion += "(acertaste el color) "
+                }
             }
 
             if (gano) {
@@ -101,12 +116,10 @@ fun RuletaScreen(
                 saldoResultante = saldoConsultado!! - montoApostar
             }
 
-            // Actualizar estado local
             esperando = false
             saldoConsultado = saldoResultante
             iniciarCuentaRegresiva = false
 
-            // Actualizar Room + API vía ViewModel
             usuarioActivo?.let { usuario ->
                 saldoResultante?.let { nuevoSaldo ->
                     ruletaview.actualizarSaldoDespuesDeJuego(usuario.id, nuevoSaldo)
@@ -115,14 +128,12 @@ fun RuletaScreen(
         }
     }
 
-
-
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier
             .fillMaxSize()
             .background(Color(0xFFADB5D9))
-            .padding(16.dp),
+            .padding(16.dp)
     ) {
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -154,11 +165,10 @@ fun RuletaScreen(
             painter = painterResource(id = R.drawable.ruletabyn),
             contentDescription = "ruletabyn",
             modifier = Modifier
-                .size(220.dp)            // usa size cuadrado o ajusta al tamaño real
+                .size(220.dp)
                 .padding(vertical = 16.dp),
-            contentScale = ContentScale.Fit   // o ContentScale.Inside
+            contentScale = ContentScale.Fit
         )
-
 
         Button(
             onClick = {
@@ -178,7 +188,7 @@ fun RuletaScreen(
             Text("Apostar")
         }
 
-        // ------- Diálogo principal de apuesta -------
+        // ----- Diálogo principal de apuesta -----
         if (mostrarApuesta) {
             AlertDialog(
                 onDismissRequest = {
@@ -192,8 +202,8 @@ fun RuletaScreen(
                 text = {
                     Column {
                         Text("Saldo disponible: ${saldoConsultado ?: 0.0}")
-
                         Spacer(Modifier.height(8.dp))
+
                         OutlinedTextField(
                             value = montoApuestaTexto,
                             onValueChange = {
@@ -203,6 +213,7 @@ fun RuletaScreen(
                         )
 
                         Spacer(Modifier.height(8.dp))
+
                         OutlinedTextField(
                             value = numeroTexto,
                             onValueChange = {
@@ -217,10 +228,10 @@ fun RuletaScreen(
                         )
 
                         Spacer(Modifier.height(8.dp))
+
                         Text("Apostar por color (opcional)")
-                        Row(
-                            horizontalArrangement = Arrangement.spacedBy(8.dp)
-                        ) {
+
+                        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                             Button(
                                 onClick = {
                                     apostarRojo = !apostarRojo
@@ -230,9 +241,7 @@ fun RuletaScreen(
                                     containerColor = if (apostarRojo) Color.Red else Color.LightGray,
                                     contentColor = Color.White
                                 )
-                            ) {
-                                Text("Rojo")
-                            }
+                            ) { Text("Rojo") }
 
                             Button(
                                 onClick = {
@@ -243,13 +252,12 @@ fun RuletaScreen(
                                     containerColor = if (apostarNegro) Color.Black else Color.LightGray,
                                     contentColor = Color.White
                                 )
-                            ) {
-                                Text("Negro")
-                            }
+                            ) { Text("Negro") }
                         }
 
-                        if (mensajeErrorApuesta.isNotEmpty())
+                        if (mensajeErrorApuesta.isNotEmpty()) {
                             Text(mensajeErrorApuesta, color = Color.Red)
+                        }
 
                         if (resultado != null) {
                             Spacer(modifier = Modifier.height(8.dp))
@@ -261,16 +269,14 @@ fun RuletaScreen(
                             } else {
                                 Text(
                                     resultado!! + "\nSaldo nuevo: $saldoResultante",
-                                    color = if (resultado!!.startsWith("¡Ganaste!")) Color(
-                                        0xFF388E3C
-                                    ) else Color.Red,
+                                    color = if (resultado!!.startsWith("¡Ganaste!"))
+                                        Color(0xFF388E3C) else Color.Red,
                                     style = MaterialTheme.typography.bodyLarge
                                 )
                             }
                         }
                     }
                 },
-                // en el AlertDialog de elegir apuesta
                 confirmButton = {
                     Button(
                         onClick = {
@@ -285,13 +291,14 @@ fun RuletaScreen(
                                 mensajeErrorApuesta = "Debes elegir un número, un color o ambos"
                             } else if (!esperando) {
                                 mensajeErrorApuesta = ""
-                                // OJO: solo cierro esta alerta y abro confirmación
                                 mostrarApuesta = false
                                 mostrarConfirmacion = true
                             }
                         },
                         enabled = !esperando
-                    ) { Text("Jugar") }
+                    ) {
+                        Text("Jugar")
+                    }
                 },
                 dismissButton = {
                     Button(
@@ -308,8 +315,7 @@ fun RuletaScreen(
             )
         }
 
-        // ------- Diálogo de confirmación tipo boleta -------
-        // ------- Diálogo de confirmación -------
+        // ----- Diálogo de confirmación -----
         if (mostrarConfirmacion) {
             val montoApostar = montoApuestaTexto.toDoubleOrNull() ?: 0.0
             val numeroElegido = numeroTexto.toIntOrNull()
@@ -352,13 +358,11 @@ fun RuletaScreen(
                     Button(
                         onClick = {
                             resultado = null
-                            iniciarCuentaRegresiva = true   // comienza el juego
-                            mostrarConfirmacion = false     // cierro boleta
-                            mostrarApuesta = true           // vuelvo a la alerta anterior
+                            iniciarCuentaRegresiva = true
+                            mostrarConfirmacion = false
+                            mostrarApuesta = true
                         }
-                    ) {
-                        Text("Aceptar")
-                    }
+                    ) { Text("Aceptar") }
                 },
                 dismissButton = {
                     TextButton(onClick = { mostrarConfirmacion = false }) {
@@ -367,8 +371,5 @@ fun RuletaScreen(
                 }
             )
         }
-
     }
 }
-
-
