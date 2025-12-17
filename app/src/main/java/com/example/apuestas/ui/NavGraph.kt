@@ -45,9 +45,17 @@ fun NavGraph(
             MenuPrincipalScreen(
                 nombreUsuario = loginViewModel.nombreUsuario,
                 onIrARuleta = { navController.navigate("ruleta") },
-                onIrABuscagana = { navController.navigate("buscagana") }
+                onIrABuscagana = { navController.navigate("buscagana") },
+                onCerrarSesion = {
+                    loginViewModel.cerrarSesion {
+                        navController.navigate("login") {
+                            popUpTo("inicio") { inclusive = true }
+                        }
+                    }
+                }
             )
         }
+
 
         composable("ruleta") {
             RuletaScreen(navController = navController)
