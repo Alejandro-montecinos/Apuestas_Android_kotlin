@@ -109,8 +109,17 @@ dependencies {
 
 
 
+    // Kotest + MockK + coroutines test
+    testImplementation("io.kotest:kotest-runner-junit5:5.8.0")
+    testImplementation("io.kotest:kotest-assertions-core:5.8.0")
+    testImplementation("io.kotest:kotest-property:5.8.0")
+    testImplementation("io.mockk:mockk:1.13.5")
+    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.3")
 
-
+// Obligatorio para usar JUnit5
+    tasks.withType<Test>().configureEach {
+        useJUnitPlatform()
+    }
 
 
 }
