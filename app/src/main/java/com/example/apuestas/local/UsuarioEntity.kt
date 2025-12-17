@@ -15,5 +15,5 @@ data class UsuarioEntity(
     val pais: String,
     val moneda: String,
     val monto: Double = 5000.0,
-    val sesionActiva: Boolean = true
+    val sesionActiva: Boolean = false
 )

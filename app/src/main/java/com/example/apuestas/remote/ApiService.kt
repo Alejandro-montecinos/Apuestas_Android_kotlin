@@ -24,6 +24,9 @@ interface ApiService {
     @GET("/api/apuestas/usuarios/{id}")
     suspend fun getUsuarioPorId(@Path("id") id: Int): Usuario
 
+    @POST("/api/apuestas/usuarios")
+    suspend fun crearUsuario(@Body usuario: Usuario): Usuario
+
     @PUT("/api/apuestas/usuarios/{id}")
     suspend fun actualizarUsuario(
         @Path("id") id: Int,
