@@ -1,6 +1,12 @@
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
+
+    // ksp sacado de la documentacion de kotling
+    id("com.google.devtools.ksp")
+
+
+
 }
 
 android {
@@ -61,7 +67,7 @@ dependencies {
     implementation("androidx.compose.material3:material3")
     implementation("androidx.compose.foundation:foundation-android:1.5.0")
 
-    // o la versión que uses
+
 
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
@@ -86,6 +92,18 @@ dependencies {
     implementation("androidx.navigation:navigation-compose:2.7.4")
 
     implementation("androidx.compose.material3:material3:1.2.0")
+
+
+// room sacado de la documentacion de google
+
+
+
+    val room_version = "2.6.1" // versión estable recomendada
+
+    implementation("androidx.room:room-runtime:$room_version")
+    implementation("androidx.room:room-ktx:$room_version")
+    ksp("androidx.room:room-compiler:$room_version")
+
 
 
 

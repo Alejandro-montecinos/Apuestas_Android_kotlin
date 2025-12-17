@@ -5,52 +5,49 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Menu
-import androidx.compose.material3.Button
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SmallTopAppBar
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.apuestas.R
-import androidx.compose.ui.tooling.preview.Preview
-import kotlin.Unit
+import com.example.apuestas.local.AppDatabase
+import com.example.apuestas.local.UsuarioEntity
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MenuPrincipalScreen(
+    nombreUsuario: String,
     onIrARuleta: () -> Unit,
     onIrABuscagana: () -> Unit
 ) {
+    val context = LocalContext.current
+    val usuarioDao = remember { AppDatabase.getInstance(context).usuarioDao() }
 
+    var usuarioActivo by remember { mutableStateOf<UsuarioEntity?>(null) }
 
-
+    LaunchedEffect(Unit) {
+        usuarioActivo = usuarioDao.obtenerUsuarioActivo()
+    }
 
 
     Scaffold(
         topBar = {
-            SmallTopAppBar(title = { Text("Bienvenido") },
+            SmallTopAppBar(
+                title = { Text("Bienvenido, ${usuarioActivo?.nombre?.substringBefore(" ")}") },
                 navigationIcon = {
-                    IconButton( onClick = {}) {
+                    IconButton(onClick = {}) {
                         Icon(
                             imageVector = Icons.Default.Menu,
                             contentDescription = "Abrir menú de navegación",
                         )
                     }
-                })
+                }
+            )
         }
     ) { padding ->
         Column(
@@ -59,17 +56,18 @@ fun MenuPrincipalScreen(
                 .padding(padding)
                 .padding(16.dp)
         ) {
-            Text("Saldo: 5000")
+
+            Text("Saldo: ${usuarioActivo?.monto}")
             Spacer(Modifier.height(12.dp))
+
             Text("Juegos disponibles", style = MaterialTheme.typography.titleMedium)
             Spacer(Modifier.height(8.dp))
 
-            // ===== GRID con dos columnas =====
             Row(
                 horizontalArrangement = Arrangement.spacedBy(12.dp),
                 modifier = Modifier.fillMaxWidth()
             ) {
-                // Boton juego 1 Buscagana
+                // Botón Buscagana
                 Button(
                     onClick = onIrABuscagana,
                     modifier = Modifier
@@ -92,13 +90,12 @@ fun MenuPrincipalScreen(
                         )
                         Spacer(modifier = Modifier.height(8.dp))
                         Text("Buscagana", style = MaterialTheme.typography.titleMedium)
-
                     }
                 }
 
-                // Boton juego 2 Ruleta
+                // Botón Ruleta
                 Button(
-                    onClick = onIrARuleta ,
+                    onClick = onIrARuleta,
                     modifier = Modifier
                         .weight(1f)
                         .aspectRatio(1f),
@@ -119,7 +116,6 @@ fun MenuPrincipalScreen(
                         )
                         Spacer(modifier = Modifier.height(8.dp))
                         Text("Ruleta", style = MaterialTheme.typography.titleMedium)
-
                     }
                 }
             }
@@ -131,6 +127,7 @@ fun MenuPrincipalScreen(
 @Composable
 fun PreviewMenuPrincipal() {
     MenuPrincipalScreen(
+        nombreUsuario = "Boris",
         onIrARuleta = {},
         onIrABuscagana = {}
     )
