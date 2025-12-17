@@ -48,7 +48,7 @@ class RegistroViewModel(
                     telefono = uiState.telefono,
                     pais = uiState.pais,
                     moneda = uiState.moneda,
-                    monto = 0.0,
+                    monto = 5000.0,
                     sesionActiva = true
                 )
                 usuarioDao.cerrarTodasLasSesiones()

@@ -154,6 +154,8 @@ fun RegistroScreen(
             isError = !edadValid && uiState.edad.isNotEmpty(),
             modifier = Modifier.fillMaxWidth(),
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+            singleLine = true,
+            maxLines = 1,
             colors = OutlinedTextFieldDefaults.colors(
                 focusedBorderColor = Color(0xFFFFA726),
                 unfocusedBorderColor = Color.Black,

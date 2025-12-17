@@ -6,14 +6,17 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.apuestas.R
+import com.example.apuestas.local.AppDatabase
+import com.example.apuestas.local.UsuarioEntity
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -22,12 +25,20 @@ fun MenuPrincipalScreen(
     onIrARuleta: () -> Unit,
     onIrABuscagana: () -> Unit
 ) {
-    val nombreUsuario = if (nombreUsuario.isBlank()) "Usuario" else nombreUsuario
+    val context = LocalContext.current
+    val usuarioDao = remember { AppDatabase.getInstance(context).usuarioDao() }
+
+    var usuarioActivo by remember { mutableStateOf<UsuarioEntity?>(null) }
+
+    LaunchedEffect(Unit) {
+        usuarioActivo = usuarioDao.obtenerUsuarioActivo()
+    }
+
 
     Scaffold(
         topBar = {
             SmallTopAppBar(
-                title = { Text("Bienvenido, ${nombreUsuario.substringBefore(" ")}") },
+                title = { Text("Bienvenido, ${usuarioActivo?.nombre?.substringBefore(" ")}") },
                 navigationIcon = {
                     IconButton(onClick = {}) {
                         Icon(
@@ -46,18 +57,17 @@ fun MenuPrincipalScreen(
                 .padding(16.dp)
         ) {
 
-            Text("Saldo: 5000")
+            Text("Saldo: ${usuarioActivo?.monto}")
             Spacer(Modifier.height(12.dp))
 
             Text("Juegos disponibles", style = MaterialTheme.typography.titleMedium)
             Spacer(Modifier.height(8.dp))
 
-            // ===== GRID con dos columnas =====
             Row(
                 horizontalArrangement = Arrangement.spacedBy(12.dp),
                 modifier = Modifier.fillMaxWidth()
             ) {
-                // Boton juego 1 Buscagana
+                // Botón Buscagana
                 Button(
                     onClick = onIrABuscagana,
                     modifier = Modifier
@@ -83,7 +93,7 @@ fun MenuPrincipalScreen(
                     }
                 }
 
-                // Boton juego 2 Ruleta
+                // Botón Ruleta
                 Button(
                     onClick = onIrARuleta,
                     modifier = Modifier
