@@ -8,12 +8,14 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.apuestas.viewmodel.LoginViewModel
 import com.example.apuestas.viewmodel.RegistroViewModel
+import com.example.apuestas.viewmodel.RuletaViewModel
 
 @Composable
 fun NavGraph(
     navController: NavHostController = rememberNavController(),
     registroViewModel: RegistroViewModel = viewModel(),
     loginViewModel: LoginViewModel = viewModel(),
+    ruletaViewModel: RuletaViewModel,
     startDestination: String = "login"
 ) {
     NavHost(navController = navController, startDestination = startDestination) {
@@ -58,8 +60,12 @@ fun NavGraph(
 
 
         composable("ruleta") {
-            RuletaScreen(navController = navController)
+            RuletaScreen(
+                navController = navController,
+                ruletaview = ruletaViewModel
+            )
         }
+
 
         composable("buscagana") {
             BuscaganaScreen(Buscagana = { navController.popBackStack() })

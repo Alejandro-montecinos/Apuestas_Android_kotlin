@@ -33,6 +33,14 @@ interface ApiService {
         @Body usuario: Usuario
     ): Usuario
 
+
+    @PUT("/api/apuestas/usuarios/{id}/monto")
+    suspend fun actualizarMontoUsuario(
+        @Path("id") id: Int,
+        @Body nuevoMonto: Double
+    ): Usuario
+
+
     @GET("/api/apuestas/usuarios/{id}/monto")
     suspend fun getMontoUsuario(@Path("id") id: Int): Double
 

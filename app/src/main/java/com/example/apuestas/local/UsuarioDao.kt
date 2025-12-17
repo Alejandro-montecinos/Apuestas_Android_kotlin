@@ -20,6 +20,10 @@ interface UsuarioDao {
     @Query("SELECT * FROM usuarios WHERE correo = :correo LIMIT 1")
     suspend fun obtenerUsuarioPorCorreo(correo: String): UsuarioEntity?
 
+    @Query("UPDATE usuarios SET monto = :nuevoMonto WHERE id = :id")
+    suspend fun actualizarMontoUsuario(id: Int, nuevoMonto: Double)
+
+
 
 
 }

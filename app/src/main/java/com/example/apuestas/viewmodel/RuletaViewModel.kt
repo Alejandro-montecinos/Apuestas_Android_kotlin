@@ -7,10 +7,17 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.apuestas.local.UsuarioDao
+import com.example.apuestas.remote.ApiService
 import kotlinx.coroutines.launch
 
 
-class RuletaViewModel: ViewModel() {
+class RuletaViewModel(
+
+    private val usuarioDao: UsuarioDao,
+    private val api: ApiService
+
+): ViewModel() {
 
     val rulRepo = RuletaRepository()
     val rul = Ruleta()
@@ -72,6 +79,19 @@ class RuletaViewModel: ViewModel() {
             return true
         }else return false
     }
+
+
+    fun actualizarSaldoDespuesDeJuego(idUsuario: Int, nuevoSaldo: Double) {
+        viewModelScope.launch {
+            try {
+                usuarioDao.actualizarMontoUsuario(idUsuario, nuevoSaldo)
+                api.actualizarMontoUsuario(idUsuario, nuevoSaldo)
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+    }
+
 
 
 
